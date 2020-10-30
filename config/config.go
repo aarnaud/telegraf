@@ -2098,6 +2098,18 @@ func buildSerializer(name string, tbl *ast.Table) (serializers.Serializer, error
 		}
 	}
 
+	if node, ok := tbl.Fields["prometheus_remote_write_format"]; ok {
+		if kv, ok := node.(*ast.KeyValue); ok {
+			if b, ok := kv.Value.(*ast.Boolean); ok {
+				var err error
+				c.PrometheusRemoteWriteFormat, err = b.Boolean()
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+
 	delete(tbl.Fields, "carbon2_format")
 	delete(tbl.Fields, "influx_max_line_bytes")
 	delete(tbl.Fields, "influx_sort_fields")
@@ -2116,6 +2128,7 @@ func buildSerializer(name string, tbl *ast.Table) (serializers.Serializer, error
 	delete(tbl.Fields, "prometheus_export_timestamp")
 	delete(tbl.Fields, "prometheus_sort_metrics")
 	delete(tbl.Fields, "prometheus_string_as_label")
+	delete(tbl.Fields, "prometheus_remote_write_format")
 	return serializers.NewSerializer(c)
 }
 
