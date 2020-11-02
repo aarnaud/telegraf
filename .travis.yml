@@ -1,0 +1,26 @@
+language: go
+go:
+  - 1.15
+
+script:
+  - GOOS=linux make all
+  - GOOS=windows make all
+
+
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "Anthony ARNAUD"
+  - git config --local user.email "travic-ci@travis-ci.com"
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  - git tag $TRAVIS_TAG
+
+deploy:
+  provider: releases
+  api_key:
+    secure: TtUyOPrKXbR5zw2MQtMmtZIixpF0AjjKBoymii02RahtDeMI0t0iWL4Ow+bNB9SSDDvLagDQ8CMW1ht2OtH4rO1l0YplVrWr3b7GOhP6oX9SXh6TlqFvNEqPGegPy+SsfDXBRIL/QtSQiqxFQZ2kDKVBkKphKF9IVZ4txXd4ooAcryMFNd3U5qLxiIY7b9wqLlpybP7uLBXeQUiCEDx/QCmXSHe0EFh/j/5iaQIFbsB58Wd7iWrgR5Flkx9MjOiWs98LoY6WqqXkxu4r9aTZ2k+mmkhq3i7fDcfIv6mBAHCzp2Zf3qfgYW6L0w1QSJd7yqQP5t5pZVyL2kWheJbLFJrKWow+UQO8Mr1YD6u8Co0lg/5DynUqxqxQqIrWMUB/Hc0AnFHpEOym1QeEZKBZy764w/wthDQkvUBS6mep3gF8opSWMiFlK9nY5vYeZy08FlAl/I8hr8xU6SLyNO08q+6VALLbIFgufgEaniG++h4RIJwM8shzy1/DIweHLHp6LezGE8QmVj2KpStDJ3484Bo8Xoo6kXXJG1anj6mcSCFECYdPkp8oI0XqEyI6Znh/ogcHN4hfphFBt7JjkQYFR4/VxeLTCoqYj9XU38oQwrYq9p5f7CwddgA7I7uw0zOdMhavnxvwTYQsMxwBvs3/t9WvixsYDC0kkEuDB/jpTjg=
+  file:
+   - telegraf
+   - telegraf.exe
+  overwrite: true
+  on:
+    branch: "ci/*"
